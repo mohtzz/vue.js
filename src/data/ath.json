@@ -1,0 +1,27 @@
+{
+  "RBSNO" : "123456",
+  "Name" : "Supplier ABC GmbH",
+  "Plants": [
+    {
+      "SRMPlantNo": "_ATH",
+      "PlantSNO": "123",
+      "DataSourceId": "00"
+    },
+    {
+      "SAPPlantNo": "0123",
+      "EkOrg": "z000",
+      "PlantSNO": "123",
+      "DataSourceId": "00"
+    }
+  ],
+  "AddressTypes": [
+    {
+      "Type": "0",
+      "LIFNR": "123"
+    },
+    {
+      "Type": "1",
+      "LIFNR": "123"
+    }
+  ]
+}
