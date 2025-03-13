@@ -43,7 +43,7 @@ export default {
     async fetchPosts () {
       try {
         this.dataLoading = true;
-          const response = await axios.get('/posts?_limit=10');
+          const response = await axios.get('');
           this.posts = response.data;
           this.dataLoading = false;
       } catch (e) {

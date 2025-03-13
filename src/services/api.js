@@ -3,7 +3,7 @@ import keycloakService from "@/services/keycloak";
 
 // Creating an instance for axios to be used by the token interceptor service
 const instance = axios.create({
-    baseURL: `https://jsonplaceholder.typicode.com/`,
+    baseURL: `http://localhost:8084/api/v1/demo`,
     headers: {
        "Content-Type": "application/json",
     },
@@ -20,12 +20,24 @@ instance.interceptors.request.use(
 );
 
 const setAuthHeader = async (config) => {
+    
+    const token = await keycloakService.CallTokenRefresh(); // Получаем токен
+    if (token) {
+        config.headers.Authorization = 'Bearer ' + token; // Устанавливаем заголовок
+    } else {
+        console.error("No token available, user might not be authenticated.");
+    }
+};
+
+/*const setAuthHeader = async (config) => {
     return  keycloakService.CallTokenRefresh ().then((token) => {
+        
+
         // If user is authenticated, place access token in request header.
         if (token.authenticated) {
             config.headers.Authorization = 'Bearer ' + token.token;
         }
     });
-};
+};*/
 
 export default instance;

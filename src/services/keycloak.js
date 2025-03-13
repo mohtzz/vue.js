@@ -1,9 +1,9 @@
 import Keycloak from 'keycloak-js';
 
 const initOptions = {
-    url: 'http://localhost:8080', // URL of the Keycloak server, as an option - read env variable: process.env.VUE_APP_KEYCLOAK_URL
-    realm: 'holog', // Name of the realm
-    clientId: 'holog-app', // Client ID you created in Keycloak
+    url: 'http://localhost:8282', // URL of the Keycloak server, as an option - read env variable: process.env.VUE_APP_KEYCLOAK_URL
+    realm: 'demo', // Name of the realm
+    clientId: 'backend', // Client ID you created in Keycloak
 };
 
 const keycloak = new Keycloak(initOptions);
@@ -53,20 +53,36 @@ async function logout(url) {
 /**
  * Refreshes token
  */
-async function refreshToken() {
+/*async function refreshToken() {
     try {
         return keycloak.updateToken(60); // update if expired in one minute
     } catch (error) {
         console.error('Failed to refresh token');
         console.error(error);
     }
+}*/
+
+async function refreshToken() {
+    try {
+        const refreshed = await keycloak.updateToken(60); // Обновляем токен, если он истекает через 60 секунд
+        if (refreshed) {
+            console.log("Token refreshed");
+        }
+        return keycloak.token; // Возвращаем текущий токен
+    } catch (error) {
+        console.error('Failed to refresh token');
+        console.error(error);
+        return null; // Возвращаем null в случае ошибки
+    }
 }
+
+
 
 const KeycloakService = {
     CallInit: init,
     CallInitStore: initStore,
     CallLogout: logout,
-    CallTokenRefresh: refreshToken
+    CallTokenRefresh: refreshToken,
 
 };
 
