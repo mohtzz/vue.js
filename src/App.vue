@@ -1,6 +1,8 @@
 <template>
-  <navbar />
+  <navbar></navbar>
   <div class="app">
+    123
+    <button>aboba</button>
     <router-view></router-view>
   </div>
 </template>
