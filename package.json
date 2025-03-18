@@ -8,11 +8,13 @@
   },
   "dependencies": {
     "@josempgon/vue-keycloak": "^3.1.0",
+    "@mdi/font": "^7.4.47",
     "axios": "^1.7.9",
     "core-js": "^3.8.3",
     "keycloak-js": "^26.1.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
+    "vuetify": "^3.7.17",
     "vuex": "^4.0.0"
   },
   "devDependencies": {

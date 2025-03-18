@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
-import App from './App'
+import App from './App.vue'
+import vuetify from './plugins/vuetify'
 import components from "@/components/UI"
 import router from "@/router/router";
 import keycloakService from '@/services/keycloak';
@@ -19,6 +20,7 @@ keycloakService.CallInit((auth) => {
         app
             .use(router)
             .use(store)
+            .use(vuetify)
             .mount('#app')
     }
 
