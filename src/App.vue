@@ -207,7 +207,6 @@ export default {
           startDate: '10.01.2023',
           endDate: '15.01.2023'
         },
-        // Добавьте больше тестовых данных по необходимости
       ]
     }
   },
@@ -232,53 +231,13 @@ export default {
   font-size: 14px;
 }
 
-.app-bar-custom {
-  border-bottom: 10px solid rgba(0,0,0,0.1);
-  box-shadow: none !important;
-}
-
-.nav-icon {
-  color: #444;
-  transform: scale(1.2);
-  margin-left: 12px;
-}
-
-.nav-icon:hover {
-  background-color: #f5f5f5;
-}
-
-.current-path {
-  color: #444;
-  font-weight: 600;
-  font-size: 1.4rem;
-  letter-spacing: 0.5px;
-}
-
 .search-wrapper {
-  background: rgba(255,255,255,0.95);
-  border-radius: 28px;
-  padding: 6px 16px;
   width: 320px;
-}
-
-.search-field .v-input__control {
-  min-height: 48px;
-}
-
-.search-field .v-field__prepend-inner {
-  padding-right: 12px;
-}
-
-.search-field .v-icon {
-  color: #666;
-  font-size: 1.5rem;
 }
 
 .patient-table {
   border: 2px solid #e0e0e0;
-  border-radius: 10px;
   overflow: hidden;
-  font-size: 0.95rem;
 }
 
 .patient-table .v-data-table__tr:nth-child(even) {
@@ -286,35 +245,20 @@ export default {
 }
 
 .patient-table .v-data-table__tr:nth-child(odd) {
-  background-color: #ffffff;
+  background-color: #F3F6F4;
 }
 
 .patient-table .v-data-table__tr:hover {
-  background-color: #f5f5f5;
+  background-color: #EEEEEE;
 }
 
-/* Кликабельные элементы */
-.v-list-item--active .v-list-item__content,
-.v-list-item:hover .v-list-item__content {
-  color: #666;
+.v-btn--variant-text .v-btn__overlay {
+    background: red !important;
 }
 
-.v-list-item__title {
-  color: #444;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.v-list-item--active {
-  background-color: #fff0f0;
-}
-
-/* Иконки меню */
-.v-list-group__items .v-list-item {
-  padding-left: 40px;
-}
-
-.patients:hover {
-  background-color: #f5f5f5;
-}
+/* .v-btn,
+.v-list-item,
+.v-icon {
+  color: blue !important;
+} */
 </style>
