@@ -211,9 +211,6 @@ export default {
       ]
     }
   },
-  created() {
-    this.handleKeycloakRedirect();
-  },
   methods: {
     updatePath(newPath) {
       this.currentPath = newPath
@@ -222,59 +219,6 @@ export default {
     logout() {
       // Логика выхода
       console.log('Выход из системы')
-    },
-    async handleKeycloakRedirect() {
-      // Проверяем наличие параметров авторизации в URL
-      if (window.location.hash.includes('code=')) {
-        try {
-          // Парсим параметры из URL
-          const hashParams = new URLSearchParams(
-            window.location.hash.substring(1)
-          );
-          
-          // Извлекаем нужные параметры
-          const code = hashParams.get('code');
-          const state = hashParams.get('state');
-          const error = hashParams.get('error');
-
-          // Проверка на ошибки авторизации
-          if (error) {
-            throw new Error(`Authorization failed: ${error}`);
-          }
-
-          // Валидация state (пример)
-          const savedState = localStorage.getItem('oauth_state');
-          if (state !== savedState) {
-            throw new Error('Invalid state parameter');
-          }
-
-          // Обмен authorization code на токены (пример через axios)
-          const response = await this.$axios.post('/auth/token', {
-            code,
-            state,
-            redirect_uri: window.location.origin
-          });
-
-          // Сохраняем токены (пример для Vuex)
-          this.$store.commit('auth/setTokens', {
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token
-          });
-
-          // Очищаем URL БЕЗ перезагрузки страницы
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-          );
-
-          // Перенаправляем на главную страницу
-          this.$router.replace('/');
-        } catch (error) {
-          console.error('Auth error:', error);
-          this.$router.replace('/login?error=auth_failed');
-        }
-      }
     }
   }
 }

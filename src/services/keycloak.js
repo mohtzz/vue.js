@@ -3,7 +3,7 @@ import Keycloak from 'keycloak-js';
 const initOptions = {
     url: 'http://localhost:8282', // URL of the Keycloak server, as an option - read env variable: process.env.VUE_APP_KEYCLOAK_URL
     realm: 'demo', // Name of the realm
-    clientId: 'backend', // Client ID you created in Keycloak
+    clientId: 'backend' // Client ID you created in Keycloak
 };
 
 const keycloak = new Keycloak(initOptions);
@@ -18,11 +18,11 @@ let store = null;
  */
 async function init(onInitCallback) {
     try {
-        authenticated = await keycloak.init({ onLoad: "login-required" })
-        onInitCallback(authenticated)
+        authenticated = await keycloak.init({ onLoad: "login-required" });
+        onInitCallback(authenticated);
     } catch (error) {
-        console.error("Keycloak init failed")
-        console.error(error)
+        console.error("Keycloak init failed");
+        console.error(error);
     }
 }
 
@@ -32,14 +32,14 @@ async function init(onInitCallback) {
  */
 async function initStore(storeInstance) {
     try {
-        store = storeInstance
+        store = storeInstance;
         //store.initOauth(keycloak)
 
         // Show alert if user is not authenticated
         if (!authenticated) { alert("not authenticated") }
     } catch (error) {
-        console.error("Keycloak init failed")
-        console.error(error)
+        console.error("Keycloak init failed");
+        console.error(error);
     }
 };
 
@@ -49,18 +49,6 @@ async function initStore(storeInstance) {
 async function logout(url) {
     return keycloak.logout({ redirectUri: url });
 }
-
-/**
- * Refreshes token
- */
-/*async function refreshToken() {
-    try {
-        return keycloak.updateToken(60); // update if expired in one minute
-    } catch (error) {
-        console.error('Failed to refresh token');
-        console.error(error);
-    }
-}*/
 
 async function refreshToken() {
     try {
