@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+
+* {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nav-icon {
+  transition: color 0.3s ease !important;
+}
+
+.nav-icon:hover {
+  color: rgba(255, 0, 0, 0.4);
+}
+
+.nav-icon:active {
+  color: rgba(255, 0, 0, 0.4);
+}
+
+.menu-chapter, .menu-item {
+  transition: color 0.3s ease !important;
+}
+
+.menu-chapter:hover,
+.menu-item:hover {
+  color: rgba(255, 0, 0, 0.4);
+}
+
+.menu-chapter:active,
+.menu-item:active {
+  color: rgba(255, 0, 0, 0.4);
+}
+
+.table {
+  overflow-x: hidden;
+}
+
+.grid-header {
+  background-color: lightgray;
+  border: 1px solid rgb(160, 159, 159);
+}
+
+.grid-row {
+  border: 1px solid rgb(160, 159, 159);
+  transition: background-color 0.3s;
+}
+
+.grid-row:hover {
+  background-color: rgb(151, 150, 150);
+}
+
+.even-row {
+  background-color: #eeecec;
+}
