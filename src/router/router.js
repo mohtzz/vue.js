@@ -1,21 +1,35 @@
 import {createRouter, createWebHistory} from "vue-router";
-import keycloakService from '@/services/keycloak';
-
-import main from '@/pages/main';
-import posts from '@/pages/posts';
-import about from "@/pages/about";
-import postEdit from "@/pages/postEdit";
+import { keycloak } from '@/services/keycloak';
 
 const routes = [
-    {path: '/', component: main},
-    {path: '/posts', component: posts},
-    {path: '/about', component: about},
-    {path: '/posts/:id', component: postEdit},
+    { path: '/', component: () => import('@/pages/main') },
+    { path: '/posts', component: () => import('@/pages/posts') },
+    { path: '/about', component: () => import('@/pages/about') },
+    { path: '/posts/:id', component: () => import('@/pages/postEdit') },
 ];
 
-const router = createRouter({routes, history: createWebHistory()});
+const initializeRouter = () => {
+    const router = createRouter({
+        history: createWebHistory(),
+        routes
+    });
+    router.beforeEach(async (to) => {
+        if (!keycloak.authenticated) {
+            await keycloak.login();
+            return false;
+        }
+        try {
+            const refreshed = await keycloak.updateToken(60);
+            if (refreshed) {
+                console.log("Token refreshed");
+            }
+        } catch (error) {
+            console.error('Failed to refresh token', error);
+            return keycloak.login();
+        }
+        return true;
+    });
+    return router;
+};
 
-router.beforeEach((to, from, next) => {
-    return keycloakService.CallTokenRefresh().then(token => { next ()});
-});
-export default router;
+export { initializeRouter };

@@ -2,66 +2,45 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import components from "@/components/UI"
-import router from "@/router/router";
-import keycloakService from '@/services/keycloak';
+import KeycloakService, { keycloak } from '@/services/keycloak';
 import store from '@/state';
+import { initializeRouter } from '@/router/router'
 
-keycloakService.CallInit((auth) => {
-    if (!auth) {
-        console.info("auth is false, reload");
-        window.location.reload();
-    } else {
-        console.info("Authenticated ");
-
-        const app = createApp(App);
-        components.forEach(component => {
-            app.component(component.name, component)
+async function bootstrapApp() {
+    try {
+        const authenticated = await KeycloakService.CallInit((auth) => {
+            if (!auth) {
+                console.info("Auth failed, reloading...");
+                window.location.reload();
+            }
         });
-        app
-            .use(router)
-            .use(store)
-            .use(vuetify)
-            .mount('#app')
-    }
+        if (authenticated) {
+            const app = createApp(App);
+            components.forEach(component => {
+                app.component(component.name, component);
+            });
 
-}).catch(() => {
-    console.error("Authenticated Failed");
-});
-/**
- * keycloak.init({ onLoad: 'login-required' }).then((auth) => {
- *     if (!auth) {
- *         console.info("auth is false, reload");
- *         window.location.reload();
- *     } else {
- *         console.info("Authenticated ");
- *         console.log(keycloak.tokenParsed);
- *
- *         const app = createApp(App);
- *         components.forEach(component => {
- *             app.component(component.name, component)
- *         });
- *         app
- *             .use(router)
- *             .use(store)
- *             .mount('#app')
- *     }
- *
- *     // Token Refresh
- *     setInterval(() => {
- *         console.info("before update token");
- *         keycloak.updateToken(70).then((refreshed) => {
- *             if (refreshed) {
- *                 console.info('Token refreshed' + refreshed + ' ' + keycloak.tokenParsed);
- *             } else {
- *                 console.warn('Token not refreshed, valid for '
- *                     + Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
- *             }
- *         }).catch(() => {
- *             console.error('Failed to refresh token');
- *         });
- *     }, 400000);
- *
- * }).catch(() => {
- *     console.error("Authenticated Failed");
- * });
- */
+            const router = initializeRouter();
+            
+            app.use(router)
+               .use(store)
+               .use(vuetify)
+               .mount('#app');
+
+            setInterval(async () => {
+                try {
+                    const refreshed = await keycloak.updateToken(70);
+                    if (refreshed) {
+                        console.info('Token refreshed');
+                    }
+                } catch (error) {
+                    console.error('Failed to refresh token', error);
+                }
+            }, 400000);
+        }
+    } catch (error) {
+        console.error("Application bootstrap failed:", error);
+    }
+}
+
+bootstrapApp();

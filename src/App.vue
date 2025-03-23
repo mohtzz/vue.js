@@ -6,31 +6,35 @@
       <v-app-bar-nav-icon @click="drawer = !drawer" class="nav-icon" />
       
       <!-- Текущий раздел -->
-      <v-toolbar-title class="current-path ml-4">{{ currentPath }}</v-toolbar-title>
+      <v-toolbar-title class="current-path">{{ currentPath }}</v-toolbar-title>
       
       <!-- Поле поиска -->
-      <v-spacer />
-      <div class="search-wrapper">
+      <div class="search-wrapper" style="flex-grow: 1; display: flex; justify-content: flex-end;">
         <v-text-field
           v-model="search"
-          flat
           hide-details
           placeholder="Найти пациента"
           class="search-field"
           prepend-icon="mdi-magnify mt-4"
+          style="max-width: 300px;"
         />
       </div>
     </v-app-bar>
 
     <!-- Боковое меню -->
-    <v-navigation-drawer v-model="drawer" temporary app width="280">
+    <v-navigation-drawer v-model="drawer" temporary app>
       <v-list dense nav>
         <!-- Раздел Пациенты -->
         <v-list-group value="true">
           <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" title="Пациенты" class="patients" />
+            <v-list-item
+                v-bind="props"
+                title="Пациенты"
+                :class="['patients', 'menu-chapter']"
+              />
           </template>
           <v-list-item
+            class="menu-item"
             v-for="(item, i) in patientItems"
             :key="i"
             :value="item"
@@ -43,61 +47,92 @@
         <!-- Раздел Отчеты -->
         <v-list-group>
           <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" title="Отчеты" />
+            <v-list-item v-bind="props" title="Отчеты" class="menu-chapter" />
           </template>
           <v-list-item
-            title="Годовой"
-            @click="updatePath('Отчеты > Годовой')"
-          />
+            class="menu-item"
+            v-for="(item, i) in reportItems"
+            :key="i"
+            :value="item"
+            @click="updatePath('Отчеты > ' + item.title)"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
         </v-list-group>
 
         <!-- Раздел Справочники -->
         <v-list-group>
           <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" title="Справочники" />
+            <v-list-item v-bind="props" title="Справочники" class="menu-chapter" />
           </template>
           <v-list-item
-            title="Персонал"
-            @click="updatePath('Справочники > Персонал')"
-          />
-          <v-list-item
-            title="Подразделения"
-            @click="updatePath('Справочники > Подразделения')"
-          />
+            class="menu-item"
+            v-for="(item, i) in referenceItems"
+            :key="i"
+            :value="item"
+            @click="updatePath('Справочники > ' + item.title)"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
         </v-list-group>
 
         <!-- Раздел Пользователь -->
         <v-list-group>
           <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" title="Пользователь" />
+            <v-list-item v-bind="props" title="Пользователь" class="menu-chapter" />
           </template>
           <v-list-item
-            title="Информация"
-            @click="updatePath('Пользователь > Информация')"
-          />
-          <v-list-item title="Выйти" @click="logout" />
+            class="menu-item"
+            v-for="(item, i) in userItems"
+            :key="i"
+            :value="item"
+            @click="handleUserItem(item)"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
     <!-- Основное содержимое -->
-    <v-main>
-      <v-data-table
-        :headers="headers"
-        :items="patients"
-        :search="search"
-        item-key="id"
-        class="patient-table"
-      >
-        <!-- Шаблон для столбца с ФИО -->
-        <template v-slot:item.name="{ item }">
-          <div>
-            <strong>{{ item.name }}</strong><br>
-            {{ item.birthDate }}<br>
-            {{ item.rank }}
-          </div>
-        </template>
-      </v-data-table>
+    <v-main class="table">
+      <v-container fluid>
+        <!-- Заголовки колонок -->
+        <v-row class="grid-header">
+          <v-col cols="12" md="3">ФИО<br>Дата рождения, Звание</v-col>
+          <v-col cols="6" md="2">Диагноз</v-col>
+          <v-col cols="6" md="2">Врач</v-col>
+          <v-col cols="6" md="2">Дата заболевания</v-col>
+          <v-col cols="6" md="2">Дата выписки</v-col>
+        </v-row>
+
+        <!-- Строки с данными -->
+        <v-row
+          v-for="(patient, index) in filteredPatients"
+          :key="patient.id"
+          class="grid-row"
+          :class="{ 'even-row': index % 2 === 0 }"
+        >
+          <v-col cols="12" md="3">
+            <div>
+              <div>{{ patient.fullName }}</div>
+              <div>{{ patient.birthDate }}, {{ patient.rank }}</div>
+            </div>
+          </v-col>
+          <v-col cols="6" md="2">
+            {{ patient.diagnosis }}
+          </v-col>
+          <v-col cols="6" md="2">
+            {{ patient.doctor }}
+          </v-col>
+          <v-col cols="6" md="2">
+            {{ patient.startDate }}
+          </v-col>
+          <v-col cols="6" md="2">
+            {{ patient.endDate }}
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -115,99 +150,87 @@ export default {
         { title: 'Госпиталь' },
         { title: 'Новый пациент' },
       ],
-      headers: [
-        { 
-          title: 'ФИО, Дата рождения, Звание',
-          key: 'name',
-          width: '25%'
-        },
-        { title: 'Диагноз', key: 'diagnosis' },
-        { title: 'Лечащий врач', key: 'doctor' },
-        { title: 'Дата заболевания', key: 'startDate' },
-        { title: 'Дата выписки', key: 'endDate' },
+      reportItems: [
+        { title: 'Годовой' }
+      ],
+      referenceItems: [
+        { title: 'Персонал' },
+        { title: 'Подразделения' }
+      ],
+      userItems: [
+        { title: 'Информация' },
+        { title: 'Выйти' }
       ],
       patients: [
         {
           id: 1,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
+          fullName: 'Иванов Иван Иванович',
+          birthDate: '25/02/1995',
+          rank: 'Майор',
           diagnosis: 'ОРВИ',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
+          doctor: 'Преображенский Ф.Ф.',
+          startDate: '25/02/2025',
+          endDate: '01/03/2025'
         },
         {
           id: 2,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
-          diagnosis: 'тахикардия',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
+          fullName: 'Петров Петр Петрович',
+          birthDate: '02/03/2001',
+          rank: 'Ст. лейтенант',
+          diagnosis: 'Насморк',
+          doctor: 'Борменталь И.А.',
+          startDate: '05/01/2025',
+          endDate: ''
         },
         {
           id: 3,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
-          diagnosis: 'дурак',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
+          fullName: 'Иванов Иван Иванович',
+          birthDate: '25/02/1995',
+          rank: 'Майор',
+          diagnosis: 'ОРВИ',
+          doctor: 'Преображенский Ф.Ф.',
+          startDate: '25/02/2025',
+          endDate: ''
         },
         {
           id: 4,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
-          diagnosis: 'ОРВИ',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
+          fullName: 'Петров Петр Петрович',
+          birthDate: '02/03/2001',
+          rank: 'Ст. лейтенант',
+          diagnosis: 'Насморк',
+          doctor: 'Борменталь И.А.',
+          startDate: '05/01/2025',
+          endDate: '08/03/2025'
         },
         {
           id: 5,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
+          fullName: 'Иванов Иван Иванович',
+          birthDate: '25/02/1995',
+          rank: 'Майор',
           diagnosis: 'ОРВИ',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
+          doctor: 'Преображенский Ф.Ф.',
+          startDate: '25/02/2025',
+          endDate: ''
         },
         {
           id: 6,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
-          diagnosis: 'ОРВИ',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
-        },
-        {
-          id: 7,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
-          diagnosis: 'ОРВИ',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
-        },
-        {
-          id: 8,
-          name: 'Иванов И.И.',
-          birthDate: '15.05.1980',
-          rank: 'капитан',
-          diagnosis: 'ОРВИ',
-          doctor: 'Петрова А.С.',
-          startDate: '10.01.2023',
-          endDate: '15.01.2023'
+          fullName: 'Петров Петр Петрович',
+          birthDate: '02/03/2001',
+          rank: 'Ст. лейтенант',
+          diagnosis: 'Насморк',
+          doctor: 'Борменталь И.А.',
+          startDate: '05/01/2025',
+          endDate: ''
         },
       ]
+    }
+  },
+  computed: {
+    filteredPatients() {
+      return this.patients.filter(patient => 
+        patient.fullName.toLowerCase().includes(this.search.toLowerCase()) ||
+        patient.diagnosis.toLowerCase().includes(this.search.toLowerCase())
+      )
     }
   },
   methods: {
@@ -218,6 +241,13 @@ export default {
     logout() {
       // Логика выхода
       console.log('Выход из системы')
+    },
+    handleUserItem(item) {
+      if (item.title === 'Выйти') {
+        this.logout();
+      } else {
+        this.updatePath('Пользователь > ' + item.title);
+      }
     }
   }
 }
@@ -229,36 +259,54 @@ export default {
 * {
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
+  font-weight: bold;
 }
 
-.search-wrapper {
-  width: 320px;
+.nav-icon {
+  transition: color 0.3s ease !important;
 }
 
-.patient-table {
-  border: 2px solid #e0e0e0;
-  overflow: hidden;
+.nav-icon:hover {
+  color: rgba(255, 0, 0, 0.4);
 }
 
-.patient-table .v-data-table__tr:nth-child(even) {
-  background-color: #fafafa;
+.nav-icon:active {
+  color: rgba(255, 0, 0, 0.4);
 }
 
-.patient-table .v-data-table__tr:nth-child(odd) {
-  background-color: #F3F6F4;
+.menu-chapter, .menu-item {
+  transition: color 0.3s ease !important;
 }
 
-.patient-table .v-data-table__tr:hover {
-  background-color: #EEEEEE;
+.menu-chapter:hover,
+.menu-item:hover {
+  color: rgba(255, 0, 0, 0.4);
 }
 
-.v-btn--variant-text .v-btn__overlay {
-    background: red !important;
+.menu-chapter:active,
+.menu-item:active {
+  color: rgba(255, 0, 0, 0.4);
 }
 
-/* .v-btn,
-.v-list-item,
-.v-icon {
-  color: blue !important;
-} */
+.table {
+  overflow-x: hidden;
+}
+
+.grid-header {
+  background-color: lightgray;
+  border: 1px solid rgb(160, 159, 159);
+}
+
+.grid-row {
+  border: 1px solid rgb(160, 159, 159);
+  transition: background-color 0.3s;
+}
+
+.grid-row:hover {
+  background-color: rgb(151, 150, 150);
+}
+
+.even-row {
+  background-color: #eeecec;
+}
 </style>

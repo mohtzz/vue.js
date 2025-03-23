@@ -6,9 +6,8 @@ const initOptions = {
     clientId: 'backend' // Client ID you created in Keycloak
 };
 
-const keycloak = new Keycloak(initOptions);
+export const keycloak = new Keycloak(initOptions);
 
-let authenticated;
 let store = null;
 
 /**
@@ -18,11 +17,12 @@ let store = null;
  */
 async function init(onInitCallback) {
     try {
-        authenticated = await keycloak.init({ onLoad: "login-required" });
+        const authenticated = await keycloak.init({ onLoad: "login-required" });
         onInitCallback(authenticated);
+        return authenticated;
     } catch (error) {
-        console.error("Keycloak init failed");
-        console.error(error);
+        console.error("Keycloak init failed", error);
+        throw error;
     }
 }
 
@@ -52,15 +52,15 @@ async function logout(url) {
 
 async function refreshToken() {
     try {
-        const refreshed = await keycloak.updateToken(60); // Обновляем токен, если он истекает через 60 секунд
+        const refreshed = await keycloak.updateToken(60);
         if (refreshed) {
             console.log("Token refreshed");
         }
-        return keycloak.token; // Возвращаем текущий токен
+        return keycloak.token;
     } catch (error) {
         console.error('Failed to refresh token');
         console.error(error);
-        return null; // Возвращаем null в случае ошибки
+        return null;
     }
 }
 
