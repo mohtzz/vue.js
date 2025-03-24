@@ -24,6 +24,7 @@
 import AppBar from './components/AppBar'
 import NavigationDrawer from './components/NavigationDrawer'
 import PatientsTable from './components/PatientsTable'
+import axios from "@/services/api"
 
 export default {
   components: {
@@ -53,69 +54,11 @@ export default {
         { title: 'Информация' },
         { title: 'Выйти' }
       ],
-      patients: [
-        {
-          id: 1,
-          fullName: 'Иванов Иван Иванович',
-          birthDate: '25/02/1995',
-          rank: 'Майор',
-          diagnosis: 'ОРВИ',
-          doctor: 'Преображенский Ф.Ф.',
-          startDate: '25/02/2025',
-          endDate: '01/03/2025'
-        },
-        {
-          id: 2,
-          fullName: 'Петров Петр Петрович',
-          birthDate: '02/03/2001',
-          rank: 'Ст. лейтенант',
-          diagnosis: 'Насморк',
-          doctor: 'Борменталь И.А.',
-          startDate: '05/01/2025',
-          endDate: ''
-        },
-        {
-          id: 3,
-          fullName: 'Иванов Иван Иванович',
-          birthDate: '25/02/1995',
-          rank: 'Майор',
-          diagnosis: 'ОРВИ',
-          doctor: 'Преображенский Ф.Ф.',
-          startDate: '25/02/2025',
-          endDate: ''
-        },
-        {
-          id: 4,
-          fullName: 'Петров Петр Петрович',
-          birthDate: '02/03/2001',
-          rank: 'Ст. лейтенант',
-          diagnosis: 'Насморк',
-          doctor: 'Борменталь И.А.',
-          startDate: '05/01/2025',
-          endDate: '08/03/2025'
-        },
-        {
-          id: 5,
-          fullName: 'Иванов Иван Иванович',
-          birthDate: '25/02/1995',
-          rank: 'Майор',
-          diagnosis: 'ОРВИ',
-          doctor: 'Преображенский Ф.Ф.',
-          startDate: '25/02/2025',
-          endDate: ''
-        },
-        {
-          id: 6,
-          fullName: 'Петров Петр Петрович',
-          birthDate: '02/03/2001',
-          rank: 'Ст. лейтенант',
-          diagnosis: 'Насморк',
-          doctor: 'Борменталь И.А.',
-          startDate: '05/01/2025',
-          endDate: ''
-        },
-      ]
+      patients: []
     }
+  },
+  created() {
+    this.fetchPatients();
   },
   computed: {
     filteredPatients() {
@@ -139,6 +82,14 @@ export default {
         this.logout();
       } else {
         this.updatePath('Пользователь > ' + item.title);
+      }
+    },
+    async fetchPatients() {
+      try {
+        const response = await axios.get();
+        this.patients = response.data;
+      } catch (error) {
+        console.error('Ошибка при получении данных пациентов:', error);
       }
     }
   }
