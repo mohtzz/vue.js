@@ -32,9 +32,6 @@
 </script>
 
 <style scoped>
-.app-bar-custom {
-  background-color: white !important;
-}
 
 .nav-icon {
   transition: color 0.3s ease;
@@ -45,8 +42,9 @@
 }
 
 .current-path {
-  font-weight: 700;
+  font-weight: normal !important;
   margin-left: 16px;
+  font-size: 1px !important;
 }
 
 .search-wrapper {

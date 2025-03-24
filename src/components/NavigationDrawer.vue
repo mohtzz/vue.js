@@ -13,6 +13,8 @@
           <v-list-item
             v-for="(item, i) in patientItems"
             :key="'patient-' + i"
+            :value="item"
+            :active-class="'custom-selected'"
             class="menu-item"
             @click="$emit('update-path', 'Пациенты > ' + item.title)"
           >
@@ -32,6 +34,8 @@
           <v-list-item
             v-for="(item, i) in reportItems"
             :key="'report-' + i"
+            :value="item"
+            :active-class="'custom-selected'"
             class="menu-item"
             @click="$emit('update-path', 'Отчеты > ' + item.title)"
           >
@@ -51,6 +55,8 @@
           <v-list-item
             v-for="(item, i) in referenceItems"
             :key="'reference-' + i"
+            :value="item"
+            :active-class="'custom-selected'"
             class="menu-item"
             @click="$emit('update-path', 'Справочники > ' + item.title)"
           >
@@ -70,6 +76,8 @@
           <v-list-item
             v-for="(item, i) in userItems"
             :key="'user-' + i"
+            :value="item"
+            :active-class="'custom-selected'"
             class="menu-item"
             @click="handleItemClick(item)"
           >
@@ -139,5 +147,9 @@
 .menu-chapter:active,
 .menu-item:active {
   color: rgba(255, 0, 0, 0.4) !important;
+}
+
+.custom-selected {
+  color: rgba(255, 0, 0, 0.6) !important;
 }
 </style>

@@ -29,15 +29,4 @@ const setAuthHeader = async (config) => {
     }
 };
 
-/*const setAuthHeader = async (config) => {
-    return  keycloakService.CallTokenRefresh ().then((token) => {
-        
-
-        // If user is authenticated, place access token in request header.
-        if (token.authenticated) {
-            config.headers.Authorization = 'Bearer ' + token.token;
-        }
-    });
-};*/
-
 export default instance;

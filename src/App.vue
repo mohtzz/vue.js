@@ -9,6 +9,7 @@
     
     <NavigationDrawer
       :drawer="drawer"
+      :current-path="currentPath"
       @update-path="updatePath"
       @logout="logout"
     />
@@ -149,6 +150,10 @@ export default {
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   font-weight: bold;
+}
+
+.table {
+  overflow-x: hidden;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
