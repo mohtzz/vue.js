@@ -1,4 +1,3 @@
-# holog.ui
 
 ## Project setup
 ```
